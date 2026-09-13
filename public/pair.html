@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIMAH MD - Pairing Portal</title>
+    <link rel="icon" href="https://i.ibb.co/Xx3HSfps/file-00000000446c81faa6d8e84332e88889.png">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top, #2a1204 0%, #05070a 65%);
+            color: #fff7ed;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 20px;
+            overflow-x: hidden;
+        }
+        .card {
+            position: relative;
+            background: rgba(10, 8, 6, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 50px rgba(249,115,22,0.25);
+            width: 380px;
+            max-width: 100%;
+            text-align: center;
+            border: 1px solid rgba(249,115,22,0.35);
+        }
+        .logo-wrap {
+            position: relative;
+            width: 110px; height: 110px; margin: 0 auto 14px auto;
+        }
+        .logo-wrap::before {
+            content: '';
+            position: absolute; inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #f97316, #facc15, #f59e0b, #f97316);
+            animation: spin 6s linear infinite;
+            z-index: 0;
+        }
+        .logo-inner {
+            position: relative; z-index: 1;
+            width: 100%; height: 100%; border-radius: 50%;
+            background: #0b0603; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .logo-inner img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        h2 {
+            color: #fb923c; margin: 4px 0 4px 0; font-size: 27px; letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(249,115,22,0.6);
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #1c0a00;
+            background: linear-gradient(135deg,#facc15,#f97316);
+            padding: 4px 12px; border-radius: 20px; font-weight: bold; margin-bottom: 14px; letter-spacing: 0.5px;
+        }
+        .badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+        p { color: #d6b7a3; font-size: 14px; margin-bottom: 20px; }
+        .input-wrap { position: relative; }
+        .input-wrap svg {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            width: 18px; height: 18px; stroke: #c2916e; pointer-events: none;
+        }
+        input {
+            width: 100%; padding: 14px 14px 14px 42px; margin: 10px 0 20px 0;
+            border: 1px solid #4a2a15; border-radius: 10px;
+            background: #170d07; color: #fff; font-size: 16px;
+            outline: none; transition: 0.25s;
+        }
+        input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,0.25); }
+        button {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: #1c0a00; border: none; padding: 14px; width: 100%;
+            border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; transition: 0.25s; letter-spacing: 0.3px;
+        }
+        button svg { width: 18px; height: 18px; }
+        button:hover:not(:disabled) { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(249,115,22,0.45); }
+        button:disabled { opacity: 0.55; cursor: not-allowed; }
+        #result { margin-top: 20px; font-size: 15px; word-break: break-all; font-weight: bold; min-height: 20px; }
+        .code-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #result .code-box {
+            font-size: 26px; color: #facc15; background: #170d07; padding: 10px 20px;
+            border-radius: 8px; display: inline-block; border: 1px dashed #facc15; letter-spacing: 2px;
+        }
+        .copy-btn {
+            width: 42px; height: 42px; padding: 0; flex-shrink: 0;
+            background: #170d07; border: 1px solid #4a2a15; color: #facc15;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.2s;
+        }
+        .copy-btn svg { width: 18px; height: 18px; }
+        .copy-btn:hover { border-color: #f97316; }
+        .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+        .wa-open-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: #062013; text-decoration: none; padding: 12px; width: 100%;
+            border-radius: 10px; font-weight: bold; font-size: 15px; margin-top: 14px;
+            transition: 0.25s;
+        }
+        .wa-open-btn:hover { opacity: 0.92; transform: translateY(-2px); }
+        #result .hint { display: block; font-size: 12px; color: #d6b7a3; font-weight: normal; margin-top: 10px; }
+        #result .err { display: inline-flex; align-items: center; gap: 6px; color: #f87171; }
+        #result .err svg { width: 16px; height: 16px; flex-shrink: 0; }
+        .footer { margin-top: 22px; font-size: 11px; color: #7a5a44; }
+        .status-line { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #d6b7a3; margin-top: 10px; }
+        .status-dot {
+            display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+            background: #64748b;
+        }
+        .status-dot.online { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+        .status-dot.offline { background: #f87171; box-shadow: 0 0 8px #f87171; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo-wrap"><div class="logo-inner"><img src="https://i.ibb.co/Xx3HSfps/file-00000000446c81faa6d8e84332e88889.png" alt="NIMAH MD logo"></div></div>
+        <span class="badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 11-14h-7l1-6z"/></svg>
+            100+ COMMANDS
+        </span>
+        <h2>NIMAH MD</h2>
+        <p>Enter your WhatsApp number with country code to get your pair code</p>
+        <form id="pairForm">
+            <div class="input-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <input type="text" id="phone" placeholder="e.g. 94771234567" required>
+            </div>
+            <button type="submit" id="btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span id="btnText">Get Pair Code</span>
+            </button>
+        </form>
+        <div id="result"></div>
+        <div class="status-line">
+            <span class="status-dot" id="statusDot"></span><span id="statusText">Checking status...</span>
+        </div>
+        <div class="footer">Powered by NIMAH MD — Multi-Device</div>
+    </div>
+    <script>
+        // Lightweight in-browser sound design (no external audio files needed)
+        let audioCtx = null;
+        function getCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+        function tone(freq, duration, delay, type, gainPeak) {
+            try {
+                const ctx = getCtx();
+                setTimeout(() => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = type || 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(gainPeak || 0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration / 1000);
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + duration / 1000);
+                }, delay || 0);
+            } catch (e) {}
+        }
+        function playClick() { tone(520, 70, 0, 'sine', 0.06); }
+        function playSuccess() {
+            tone(523, 110, 0, 'triangle', 0.07);
+            tone(659, 110, 100, 'triangle', 0.07);
+            tone(784, 140, 200, 'triangle', 0.08);
+            tone(1046, 220, 340, 'triangle', 0.08);
+        }
+        function playError() { tone(300, 160, 0, 'sawtooth', 0.05); tone(180, 240, 130, 'sawtooth', 0.05); }
+
+        function iconError() {
+            return '<span class="err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
+        }
+
+        let expiryTimer = null;
+        // WhatsApp pairing codes are only valid for a short window (~60s in
+        // practice). Show a live countdown so people don't sit on the code
+        // and let it expire, which was causing "logged out, restarting
+        // pairing" loops in the server logs.
+        function startExpiryCountdown(btn, btnText) {
+            if (expiryTimer) clearInterval(expiryTimer);
+            let secondsLeft = 60;
+            const hint = document.getElementById('expiryHint');
+            const tick = () => {
+                if (!hint) return;
+                if (secondsLeft <= 0) {
+                    clearInterval(expiryTimer);
+                    hint.innerText = '⏰ Code expired — please generate a new one.';
+                    hint.style.color = '#f87171';
+                    btn.disabled = false;
+                    btnText.innerText = 'Get New Code';
+                    return;
+                }
+                hint.innerText = `⏳ Enter this within ${secondsLeft}s before it expires`;
+                secondsLeft--;
+            };
+            tick();
+            expiryTimer = setInterval(tick, 1000);
+        }
+
+        function copyIconSvg() {
+            return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        }
+        function checkIconSvg() {
+            return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>';
+        }
+        function waIconSvg() {
+            return '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.02c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.14.11-1.83-.12-.42-.13-.96-.31-1.65-.6-2.9-1.25-4.79-4.17-4.94-4.36-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.02-2.41.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2 .89 2.15.07.15.11.32.02.51-.09.2-.14.32-.27.49-.14.17-.28.38-.4.51-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.2.68-.79.86-1.06.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.87.27.14.45.2.51.32.07.12.07.68-.17 1.36z"/></svg>';
+        }
+        function setupCopyButton(code) {
+            const copyBtn = document.getElementById('copyBtn');
+            if (!copyBtn) return;
+            copyBtn.addEventListener('click', async () => {
+                const plain = code.replace(/-/g, '');
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(plain);
+                    } else {
+                        // Fallback for browsers/webviews without Clipboard API access
+                        const ta = document.createElement('textarea');
+                        ta.value = plain;
+                        ta.style.position = 'fixed';
+                        ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.focus(); ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                    }
+                    playClick();
+                    copyBtn.innerHTML = checkIconSvg();
+                    copyBtn.classList.add('copied');
+                    setTimeout(() => { copyBtn.innerHTML = copyIconSvg(); copyBtn.classList.remove('copied'); }, 1500);
+                } catch (e) {
+                    copyBtn.title = 'Copy failed — select the code manually';
+                }
+            });
+        }
+
+        document.getElementById('pairForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            playClick();
+            const phone = document.getElementById('phone').value;
+            const btn = document.getElementById('btn');
+            const btnText = document.getElementById('btnText');
+            const result = document.getElementById('result');
+            btn.disabled = true;
+            btnText.innerText = 'Generating...';
+            result.innerHTML = '';
+            try {
+                const res = await fetch('/code?phone=' + encodeURIComponent(phone));
+                const data = await res.json();
+                if (data.code) {
+                    result.innerHTML = '<div class="code-row"><span class="code-box">' + data.code + '</span>' +
+                        '<button type="button" id="copyBtn" class="copy-btn" title="Copy code">' + copyIconSvg() + '</button></div>' +
+                        '<span class="hint">Tap "Open WhatsApp" below, then go to Linked Devices → Link with phone number, and enter the code.</span>' +
+                        '<a href="whatsapp://" id="openWaBtn" class="wa-open-btn">' + waIconSvg() + ' Open WhatsApp</a>' +
+                        '<span class="hint" id="expiryHint" style="display:block;margin-top:6px;"></span>';
+                    btnText.innerText = 'Code Ready';
+                    playSuccess();
+                    pollStatus(true);
+                    startExpiryCountdown(btn, btnText);
+                    setupCopyButton(data.code);
+                } else {
+                    result.innerHTML = iconError() + (data.error || 'Failed to generate') + '</span>';
+                    btnText.innerText = 'Get Pair Code';
+                    btn.disabled = false;
+                    playError();
+                }
+            } catch (err) {
+                result.innerHTML = iconError() + 'Server connection error</span>';
+                btnText.innerText = 'Get Pair Code';
+                btn.disabled = false;
+                playError();
+            }
+        });
+
+        let statusInterval = null;
+        async function checkStatus() {
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                const dot = document.getElementById('statusDot');
+                const text = document.getElementById('statusText');
+                if (data.connected) {
+                    dot.className = 'status-dot online';
+                    text.innerText = 'Bot Connected';
+                    if (statusInterval) { clearInterval(statusInterval); statusInterval = null; }
+                    if (expiryTimer) { clearInterval(expiryTimer); expiryTimer = null; }
+                    const hint = document.getElementById('expiryHint');
+                    if (hint) { hint.innerText = '✅ Linked successfully!'; hint.style.color = '#4ade80'; }
+                } else {
+                    dot.className = 'status-dot offline';
+                    text.innerText = 'Waiting for connection...';
+                }
+            } catch (e) {
+                document.getElementById('statusText').innerText = 'Status unavailable';
+            }
+        }
+        function pollStatus(fast) {
+            checkStatus();
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(checkStatus, fast ? 3000 : 8000);
+        }
+        pollStatus(false);
+    </script>
+</body>
+</html>
